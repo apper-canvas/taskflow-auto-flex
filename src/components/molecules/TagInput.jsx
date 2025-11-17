@@ -32,7 +32,7 @@ const TagInput = ({
     if (inputValue) {
 const filtered = allTags.filter(tag => 
         tag.Name?.toLowerCase().includes(inputValue.toLowerCase()) &&
-        !value.includes(tag.name)
+        !value.includes(tag.Name)
       )
       setSuggestions(filtered)
       setIsOpen(true)
@@ -69,7 +69,7 @@ const filtered = allTags.filter(tag =>
     const trimmedName = tagName.trim()
     
     // Check if tag exists, if not create it
-    let existingTag = allTags.find(tag => tag.name.toLowerCase() === trimmedName.toLowerCase())
+let existingTag = allTags.find(tag => tag.Name?.toLowerCase() === trimmedName.toLowerCase())
     
     if (!existingTag) {
       try {
@@ -174,7 +174,7 @@ const tag = allTags.find(t => t.Name === tagName)
       {isOpen && (
         <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto">
           {/* Create New Tag Option */}
-          {inputValue && !allTags.some(tag => tag.name.toLowerCase() === inputValue.toLowerCase()) && (
+{inputValue && !allTags.some(tag => tag.Name?.toLowerCase() === inputValue.toLowerCase()) && (
             <button
               type="button"
               onClick={() => handleAddTag(inputValue)}
@@ -198,10 +198,10 @@ const tag = allTags.find(t => t.Name === tagName)
               className="w-full px-3 py-2 text-left text-sm hover:bg-slate-50 flex items-center space-x-2"
             >
               <div 
-                className="w-3 h-3 rounded-full"
+className="w-3 h-3 rounded-full"
                 style={{ backgroundColor: tag.color }}
               />
-              <span>{tag.name}</span>
+              <span>{tag.Name}</span>
             </button>
           ))}
 
