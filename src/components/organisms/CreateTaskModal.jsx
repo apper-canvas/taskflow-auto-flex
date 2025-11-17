@@ -110,37 +110,10 @@ const handleClose = () => {
             )}
           </div>
 
-{/* Tags (Input) */}
-          <div>
-            <Label>Tags (comma separated)</Label>
-            <Input
-              value={formData.tags}
-              onChange={(e) => handleInputChange("tags", e.target.value)}
-              placeholder="Enter tags separated by commas"
-              error={errors.tags}
-              className="text-base"
-            />
-            {errors.tags && (
-              <p className="text-sm text-red-600 mt-1 flex items-center">
-                <ApperIcon name="AlertCircle" className="w-4 h-4 mr-1" />
-                {errors.tags}
-              </p>
-            )}
-          </div>
-
-          {/* Tags (Visual) */}
-<Input
-              value={formData.tags}
-              onChange={(e) => handleInputChange("tags", e.target.value)}
-              placeholder="Enter tags (comma separated)"
-              error={errors.tags}
-              className="text-base"
-            />
-
-          {/* Tags */}
+{/* Tags */}
           <div>
             <Label>Tags</Label>
-<TagInput
+            <TagInput
               value={formData.tags ? formData.tags.split(',').map(t => t.trim()).filter(Boolean) : []}
               onChange={(tags) => handleInputChange("tags", Array.isArray(tags) ? tags.join(',') : tags)}
               placeholder="Add tags to categorize this task"
@@ -177,7 +150,6 @@ const handleClose = () => {
             >
               Cancel
             </Button>
-            <Button
 <Button
               type="submit"
               disabled={loading || !formData.name.trim()}
