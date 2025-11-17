@@ -1,0 +1,142 @@
+[
+  {
+    "Id": 1,
+    "name": "Authentication",
+    "color": "#3b82f6"
+  },
+  {
+    "Id": 2,
+    "name": "Security",
+    "color": "#ef4444"
+  },
+  {
+    "Id": 3,
+    "name": "Backend",
+    "color": "#10b981"
+  },
+  {
+    "Id": 4,
+    "name": "UI/UX",
+    "color": "#8b5cf6"
+  },
+  {
+    "Id": 5,
+    "name": "Frontend",
+    "color": "#f59e0b"
+  },
+  {
+    "Id": 6,
+    "name": "Design",
+    "color": "#ec4899"
+  },
+  {
+    "Id": 7,
+    "name": "Database",
+    "color": "#06b6d4"
+  },
+  {
+    "Id": 8,
+    "name": "Performance",
+    "color": "#84cc16"
+  },
+  {
+    "Id": 9,
+    "name": "Documentation",
+    "color": "#6366f1"
+  },
+  {
+    "Id": 10,
+    "name": "API",
+    "color": "#f97316"
+  },
+  {
+    "Id": 11,
+    "name": "Testing",
+    "color": "#14b8a6"
+  },
+  {
+    "Id": 12,
+    "name": "DevOps",
+    "color": "#78716c"
+  },
+  {
+    "Id": 13,
+    "name": "Automation",
+    "color": "#a855f7"
+  },
+  {
+    "Id": 14,
+    "name": "Real-time",
+    "color": "#22c55e"
+  },
+  {
+    "Id": 15,
+    "name": "WebSocket",
+    "color": "#3b82f6"
+  },
+  {
+    "Id": 16,
+    "name": "Refactoring",
+    "color": "#f59e0b"
+  },
+  {
+    "Id": 17,
+    "name": "Legacy",
+    "color": "#64748b"
+  },
+  {
+    "Id": 18,
+    "name": "Maintenance",
+    "color": "#94a3b8"
+  },
+  {
+    "Id": 19,
+    "name": "Internationalization",
+    "color": "#06b6d4"
+  },
+  {
+    "Id": 20,
+    "name": "Localization",
+    "color": "#0ea5e9"
+  },
+  {
+    "Id": 21,
+    "name": "Payment",
+    "color": "#10b981"
+  },
+  {
+    "Id": 22,
+    "name": "Integration",
+    "color": "#8b5cf6"
+  },
+  {
+    "Id": 23,
+    "name": "Mobile",
+    "color": "#ec4899"
+  },
+  {
+    "Id": 24,
+    "name": "Wireframes",
+    "color": "#6366f1"
+  },
+  {
+    "Id": 25,
+    "name": "Visualization",
+    "color": "#f59e0b"
+  },
+  {
+    "Id": 26,
+    "name": "Charts",
+    "color": "#eab308"
+  },
+  {
+    "Id": 27,
+    "name": "Monitoring",
+    "color": "#ef4444"
+  },
+  {
+    "Id": 28,
+    "name": "Infrastructure",
+    "color": "#78716c"
+  }
+]

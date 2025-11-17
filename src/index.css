@@ -1,0 +1,121 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* React Toastify Styles */
+@import 'react-toastify/dist/ReactToastify.css';
+
+@layer base {
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-feature-settings: 'rlig' 1, 'calt' 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Custom scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-slate-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-300 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-slate-400;
+}
+
+/* Custom toast styling */
+.Toastify__toast-container {
+  z-index: 9999;
+}
+
+.Toastify__toast {
+  @apply rounded-lg shadow-lg border;
+}
+
+.Toastify__toast--success {
+  @apply bg-emerald-50 text-emerald-800 border-emerald-200;
+}
+
+.Toastify__toast--error {
+  @apply bg-red-50 text-red-800 border-red-200;
+}
+
+.Toastify__toast--warning {
+  @apply bg-amber-50 text-amber-800 border-amber-200;
+}
+
+.Toastify__toast--info {
+  @apply bg-blue-50 text-blue-800 border-blue-200;
+}
+
+/* Table row hover animation */
+.table-row-hover {
+  transition: background-color 100ms ease-out;
+}
+
+/* Inline edit indicator */
+.inline-edit-field {
+  transition: all 150ms ease-out;
+}
+
+.inline-edit-field:hover {
+  @apply bg-blue-50 border-blue-200;
+}
+
+.inline-edit-field:focus {
+  @apply bg-white border-blue-400 ring-2 ring-blue-100;
+}
+
+/* Tag animation */
+.tag-enter {
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+.tag-enter-active {
+  opacity: 1;
+  transform: scale(1);
+  transition: all 200ms ease-out;
+}
+
+/* Save indicator animation */
+@keyframes flash {
+  0% { background-color: theme('colors.emerald.100'); }
+  100% { background-color: transparent; }
+}
+
+.save-flash {
+  animation: flash 300ms ease-out;
+}
+
+/* Shake animation for validation errors */
+@keyframes shake {
+  0%, 20%, 40%, 60%, 80% { transform: translateX(0); }
+  10%, 30%, 50%, 70% { transform: translateX(-4px); }
+  90% { transform: translateX(4px); }
+  100% { transform: translateX(0); }
+}
+
+.shake {
+  animation: shake 400ms ease-out;
+}
+
+/* Skeleton loading animation */
+@keyframes skeleton {
+  0% { background-position: -200px 0; }
+  100% { background-position: calc(200px + 100%) 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 0px, #e0e0e0 40px, #f0f0f0 80px);
+  background-size: 200px 100%;
+  animation: skeleton 1.2s ease-in-out infinite;
+}
