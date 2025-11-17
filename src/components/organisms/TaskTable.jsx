@@ -32,8 +32,10 @@ const TaskTable = ({
 setEditingTask(task.Id)
     setEditForm({
       Name: task.Name,
-      Owner: task.Owner?.Name || '',
-      Tags: task.Tags || ''
+Owner: task.Owner?.Name || '',
+      Tags: task.Tags || '',
+      CreatedBy: task.CreatedBy?.Name || '',
+      ModifiedBy: task.ModifiedBy?.Name || ''
     })
 
     // Load tags for tag input
@@ -153,48 +155,47 @@ const tag = allTags.find(t => t.Name === tagName)
         </div>
 
         {/* Table Header */}
-        <div className="bg-gradient-to-r from-slate-50 to-slate-100 px-6 py-4 border-b border-slate-200/70">
-          <div className="grid grid-cols-7 gap-4 items-center">
+<div className="bg-gradient-to-r from-slate-50 to-slate-100 px-6 py-4 border-b border-slate-200/70">
+          <div className="grid grid-cols-8 gap-4 items-center">
             <button
-              onClick={() => onSort("name")}
+onClick={() => onSort("Name")}
               className="flex items-center space-x-2 text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors group"
             >
               <span>Task Name</span>
               {getSortIcon("name")}
             </button>
 
-            <button
-              onClick={() => onSort("owner")}
+<button
+              onClick={() => onSort("Owner")}
               className="flex items-center space-x-2 text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors group"
             >
               <span>Owner</span>
-              {getSortIcon("owner")}
+              {getSortIcon("Owner")}
             </button>
 
-            <div className="text-sm font-semibold text-slate-700">Tags</div>
+<div className="text-sm font-semibold text-slate-700">Tags</div>
 
             <button
-              onClick={() => onSort("createdBy")}
+onClick={() => onSort("CreatedBy")}
               className="flex items-center space-x-2 text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors group"
             >
               <span>Created By</span>
-              {getSortIcon("createdBy")}
+              {getSortIcon("CreatedBy")}
             </button>
 
-            <button
-              onClick={() => onSort("createdOn")}
+<button
+              onClick={() => onSort("CreatedOn")}
               className="flex items-center space-x-2 text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors group"
             >
               <span>Created</span>
-              {getSortIcon("createdOn")}
+              {getSortIcon("CreatedOn")}
             </button>
-
-            <button
-              onClick={() => onSort("modifiedOn")}
+<button
+              onClick={() => onSort("ModifiedOn")}
               className="flex items-center space-x-2 text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors group"
             >
               <span>Modified</span>
-              {getSortIcon("modifiedOn")}
+              {getSortIcon("ModifiedOn")}
             </button>
 
             <div className="text-sm font-semibold text-slate-700 text-right">Actions</div>
@@ -213,7 +214,7 @@ const tag = allTags.find(t => t.Name === tagName)
                   : "hover:bg-slate-50/80 hover:shadow-sm"
               )}
             >
-              <div className="grid grid-cols-7 gap-4 items-center">
+<div className="grid grid-cols-8 gap-4 items-center">
                 {/* Task Name */}
 <div className="min-w-0">
                   {editingTask === task.Id ? (
@@ -236,8 +237,8 @@ const tag = allTags.find(t => t.Name === tagName)
                   )}
                 </div>
 
-                {/* Owner */}
-<div className="min-w-0">
+{/* Owner */}
+                <div className="min-w-0">
                   {editingTask === task.Id ? (
                     <Input
                       value={editForm.Owner || ''}
@@ -261,7 +262,7 @@ const tag = allTags.find(t => t.Name === tagName)
 <div className="min-w-0">
                   {editingTask === task.Id ? (
                     <TagInput
-                      value={editForm.Tags || ''}
+value={editForm.Tags || ''}
                       onChange={(tags) => setEditForm(prev => ({ ...prev, Tags: tags }))}
                       placeholder="Add tags..."
                       className="text-sm"
@@ -307,7 +308,6 @@ const tag = allTags.find(t => t.Name === tagName)
                 <div className="text-sm text-slate-500" title={new Date(task.ModifiedOn).toLocaleString()}>
                   {format(new Date(task.ModifiedOn), 'MMM d, yyyy')}
                 </div>
-
                 {/* Actions */}
                 <div className="flex items-center justify-end space-x-2">
                   {editingTask === task.Id ? (

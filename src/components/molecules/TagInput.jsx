@@ -194,7 +194,7 @@ const tag = allTags.find(t => t.Name === tagName)
             <button
               key={`${tag.Id}-${index}`}
               type="button"
-              onClick={() => handleAddTag(tag.name, tag.color)}
+onClick={() => handleAddTag(tag.Name, tag.color_c)}
               className="w-full px-3 py-2 text-left text-sm hover:bg-slate-50 flex items-center space-x-2"
             >
               <div 

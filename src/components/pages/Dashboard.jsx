@@ -48,22 +48,24 @@ const Dashboard = () => {
     let filtered = [...tasks]
 
     // Apply search filter
-    if (searchQuery) {
+if (searchQuery) {
       const query = searchQuery.toLowerCase()
       filtered = filtered.filter(task => 
-task.Name?.toLowerCase().includes(query) ||
+        task.Name?.toLowerCase().includes(query) ||
         task.Tags?.toLowerCase().includes(query) ||
-        (task.Owner?.Name || '').toLowerCase().includes(query)
+        (task.Owner?.Name || '').toLowerCase().includes(query) ||
+        (task.CreatedBy?.Name || '').toLowerCase().includes(query) ||
+        (task.ModifiedBy?.Name || '').toLowerCase().includes(query)
       )
     }
 
     // Apply filters
-    if (filters.owner) {
-filtered = filtered.filter(task => task.Owner?.Name === filters.owner)
+if (filters.owner) {
+      filtered = filtered.filter(task => task.Owner?.Name === filters.owner)
     }
 
-    if (filters.createdBy) {
-filtered = filtered.filter(task => task.CreatedBy?.Name === filters.createdBy)
+if (filters.createdBy) {
+      filtered = filtered.filter(task => task.CreatedBy?.Name === filters.createdBy)
     }
 
     if (filters.tags.length > 0) {
@@ -84,8 +86,20 @@ filtered = filtered.filter(task => new Date(task.CreatedOn) >= startDate)
 
     // Apply sorting
     filtered.sort((a, b) => {
-let aVal = a[sortConfig.key] || (sortConfig.key === 'Owner' ? a.Owner?.Name : a[sortConfig.key])
-      let bVal = b[sortConfig.key]
+let aVal = a[sortConfig.key]
+        let bVal = b[sortConfig.key]
+        
+        // Handle lookup fields properly
+        if (sortConfig.key === 'Owner' || sortConfig.key === 'CreatedBy' || sortConfig.key === 'ModifiedBy') {
+          aVal = a[sortConfig.key]?.Name || ''
+          bVal = b[sortConfig.key]?.Name || ''
+        }
+        
+        // Handle dates
+        if (sortConfig.key === 'CreatedOn' || sortConfig.key === 'ModifiedOn') {
+          aVal = new Date(aVal || 0)
+          bVal = new Date(bVal || 0)
+        }
 
       // Handle dates
 if (sortConfig.key === "CreatedOn" || sortConfig.key === "ModifiedOn") {

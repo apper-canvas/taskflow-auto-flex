@@ -13,8 +13,12 @@ export const taskService = {
       const response = await apperClient.fetchRecords('Task_c', {
         fields: [
           {"field": {"Name": "Name"}},
-          {"field": {"Name": "Tags"}},
+{"field": {"Name": "Tags"}},
           {"field": {"Name": "Owner"}},
+          {"field": {"Name": "CreatedOn"}},
+          {"field": {"Name": "CreatedBy"}},
+          {"field": {"Name": "ModifiedOn"}},
+          {"field": {"Name": "ModifiedBy"}},
           {"field": {"Name": "CreatedOn"}},
           {"field": {"Name": "CreatedBy"}},
           {"field": {"Name": "ModifiedOn"}},
@@ -49,8 +53,12 @@ export const taskService = {
       const response = await apperClient.getRecordById('Task_c', parseInt(id), {
         fields: [
           {"field": {"Name": "Name"}},
-          {"field": {"Name": "Tags"}},
+{"field": {"Name": "Tags"}},
           {"field": {"Name": "Owner"}},
+          {"field": {"Name": "CreatedOn"}},
+          {"field": {"Name": "CreatedBy"}},
+          {"field": {"Name": "ModifiedOn"}},
+          {"field": {"Name": "ModifiedBy"}},
           {"field": {"Name": "CreatedOn"}},
           {"field": {"Name": "CreatedBy"}},
           {"field": {"Name": "ModifiedOn"}},
@@ -84,7 +92,7 @@ export const taskService = {
       const params = {
         records: [{
           Name: taskData.Name,
-          Tags: taskData.Tags || "",
+Tags: taskData.Tags || "",
           status_c: taskData.status_c || "active"
         }]
       };
@@ -135,7 +143,7 @@ export const taskService = {
         records: [{
           Id: parseInt(id),
           ...(updateData.Name && { Name: updateData.Name }),
-          ...(updateData.Tags !== undefined && { Tags: updateData.Tags }),
+...(updateData.Tags !== undefined && { Tags: updateData.Tags }),
           ...(updateData.status_c && { status_c: updateData.status_c })
         }]
       };

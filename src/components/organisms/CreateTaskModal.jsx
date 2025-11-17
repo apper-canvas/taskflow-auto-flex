@@ -11,7 +11,7 @@ import Input from "@/components/atoms/Input";
 const CreateTaskModal = ({ isOpen, onClose }) => {
 const [formData, setFormData] = useState({
     name: "",
-    tags: ""
+tags: ""
   })
   const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)
@@ -43,7 +43,7 @@ const validateForm = () => {
       setLoading(true)
       
 const newTask = await taskService.create({
-        Name: formData.name.trim(),
+Name: formData.name.trim(),
         Tags: formData.tags,
         status_c: "active",
         status: "active"
@@ -86,7 +86,7 @@ const handleClose = () => {
           <div>
             <h2 className="text-2xl font-bold text-slate-900">Create New Task</h2>
             <p className="text-slate-600">Add a new task with owner and tags</p>
-          </div>
+</div>
         </div>
 
         {/* Form */}
@@ -131,7 +131,7 @@ const handleClose = () => {
             </h3>
             <div className="grid grid-cols-2 gap-4 text-sm text-slate-600">
               <div>
-                <span className="font-medium">Created by:</span> Current User
+<span className="font-medium">Created by:</span> Current User
               </div>
               <div>
                 <span className="font-medium">Created on:</span> {new Date().toLocaleDateString()}

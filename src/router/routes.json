@@ -4,11 +4,27 @@
       "when": {
         "conditions": [
           {
-            "label": "Dashboard is public",
-            "rule": "public"
+            "label": "Dashboard requires authentication",
+            "rule": "authenticated"
           }
         ]
-      }
+      },
+      "redirectOnDeny": "/login",
+      "excludeRedirectQuery": false
+    }
+  },
+  "/staff": {
+    "allow": {
+      "when": {
+        "conditions": [
+          {
+            "label": "Staff page requires authentication",
+            "rule": "authenticated"
+          }
+        ]
+      },
+      "redirectOnDeny": "/login",
+      "excludeRedirectQuery": false
     }
   },
   "/login": {
@@ -35,31 +51,7 @@
       }
     }
   },
-  "/callback": {
-    "allow": {
-      "when": {
-        "conditions": [
-          {
-            "label": "Callback page is public",
-            "rule": "public"
-          }
-        ]
-      }
-    }
-  },
-  "/error": {
-    "allow": {
-      "when": {
-        "conditions": [
-          {
-            "label": "Error page is public",
-            "rule": "public"
-          }
-        ]
-      }
-    }
-  },
-  "/reset-password/**/*": {
+  "/reset-password": {
     "allow": {
       "when": {
         "conditions": [
@@ -71,12 +63,48 @@
       }
     }
   },
-  "/prompt-password/**/*": {
+  "/reset-password/**/*": {
+    "allow": {
+      "when": {
+        "conditions": [
+          {
+            "label": "Reset password paths are public",
+            "rule": "public"
+          }
+        ]
+      }
+    }
+  },
+  "/prompt-password": {
     "allow": {
       "when": {
         "conditions": [
           {
             "label": "Prompt password is public",
+            "rule": "public"
+          }
+        ]
+      }
+    }
+  },
+  "/prompt-password/**/*": {
+    "allow": {
+      "when": {
+        "conditions": [
+          {
+            "label": "Prompt password paths are public",
+            "rule": "public"
+          }
+        ]
+      }
+    }
+  },
+  "/callback": {
+    "allow": {
+      "when": {
+        "conditions": [
+          {
+            "label": "Callback page is public",
             "rule": "public"
           }
         ]

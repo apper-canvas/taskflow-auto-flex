@@ -12,8 +12,13 @@ export const tagService = {
 
       const response = await apperClient.fetchRecords('Tag_c', {
         fields: [
-          {"field": {"Name": "Name"}},
+{"field": {"Name": "Name"}},
           {"field": {"Name": "Tags"}},
+          {"field": {"Name": "Owner"}},
+          {"field": {"Name": "CreatedOn"}},
+          {"field": {"Name": "CreatedBy"}},
+          {"field": {"Name": "ModifiedOn"}},
+          {"field": {"Name": "ModifiedBy"}},
           {"field": {"Name": "color_c"}}
         ],
         orderBy: [{"fieldName": "Name", "sorttype": "ASC"}]
@@ -44,7 +49,12 @@ export const tagService = {
       const response = await apperClient.getRecordById('Tag_c', parseInt(id), {
         fields: [
           {"field": {"Name": "Name"}},
-          {"field": {"Name": "Tags"}}, 
+{"field": {"Name": "Tags"}},
+          {"field": {"Name": "Owner"}},
+          {"field": {"Name": "CreatedOn"}},
+          {"field": {"Name": "CreatedBy"}},
+          {"field": {"Name": "ModifiedOn"}},
+          {"field": {"Name": "ModifiedBy"}},
           {"field": {"Name": "color_c"}}
         ]
       });
@@ -74,7 +84,7 @@ export const tagService = {
       const params = {
         records: [{
           Name: tagData.Name,
-          Tags: tagData.Tags || "",
+Tags: tagData.Tags || "",
           color_c: tagData.color_c || "#3b82f6"
         }]
       };
@@ -125,7 +135,7 @@ export const tagService = {
         records: [{
           Id: parseInt(id),
           ...(updateData.Name && { Name: updateData.Name }),
-          ...(updateData.Tags !== undefined && { Tags: updateData.Tags }),
+...(updateData.Tags !== undefined && { Tags: updateData.Tags }),
           ...(updateData.color_c && { color_c: updateData.color_c })
         }]
       };

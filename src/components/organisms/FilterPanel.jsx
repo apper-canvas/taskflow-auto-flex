@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react'
-import ApperIcon from '@/components/ApperIcon'
-import Button from '@/components/atoms/Button'
-import Input from '@/components/atoms/Input'
-import Select from '@/components/atoms/Select'
-import Label from '@/components/atoms/Label'
-import Badge from '@/components/atoms/Badge'
-import { tagService } from '@/services/api/tagService'
+import React, { useEffect, useState } from "react";
+import { tagService } from "@/services/api/tagService";
+import ApperIcon from "@/components/ApperIcon";
+import Select from "@/components/atoms/Select";
+import Label from "@/components/atoms/Label";
+import Button from "@/components/atoms/Button";
+import Badge from "@/components/atoms/Badge";
+import Input from "@/components/atoms/Input";
 
 const FilterPanel = ({ 
   filters, 
@@ -36,7 +36,7 @@ const FilterPanel = ({
   // Get unique values from tasks
 const uniqueOwners = [...new Set(tasks.map(task => task.Owner?.Name))].filter(Boolean)
   const uniqueCreators = [...new Set(tasks.map(task => task.CreatedBy?.Name))].filter(Boolean)
-
+  const uniqueModifiers = [...new Set(tasks.map(task => task.ModifiedBy?.Name))].filter(Boolean)
   const handleFilterChange = (key, value) => {
     onFiltersChange(prev => ({
       ...prev,
@@ -145,7 +145,7 @@ const tag = allTags.find(t => t.Name === tagName)
           
           {expandedSections.basic && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Owner Filter */}
+{/* Owner Filter */}
               <div>
                 <Label>Filter by Owner</Label>
                 <Select
@@ -161,7 +161,7 @@ const tag = allTags.find(t => t.Name === tagName)
 
               {/* Created By Filter */}
               <div>
-                <Label>Filter by Creator</Label>
+                <Label>Created By</Label>
                 <Select
                   value={filters.createdBy || ""}
                   onChange={(e) => handleFilterChange('createdBy', e.target.value)}
@@ -202,24 +202,24 @@ const tag = allTags.find(t => t.Name === tagName)
               {allTags.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
                   {allTags.map(tag => (
-                    <button
+<button
                       key={tag.Id}
-                      onClick={() => handleTagToggle(tag.name)}
+                      onClick={() => handleTagToggle(tag.Name)}
                       className={`transition-all duration-200 transform hover:scale-105 ${
-                        filters.tags?.includes(tag.name) ? 'ring-2 ring-primary-300' : ''
+                        filters.tags?.includes(tag.Name) ? 'ring-2 ring-primary-300' : ''
                       }`}
                     >
                       <Badge
                         variant="custom"
                         color={tag.color}
-                        className={`cursor-pointer ${
-                          filters.tags?.includes(tag.name) 
+className={`cursor-pointer ${
+                          filters.tags?.includes(tag.Name) 
                             ? 'opacity-100 shadow-md' 
                             : 'opacity-70 hover:opacity-100'
                         }`}
                       >
-                        {tag.name}
-                        {filters.tags?.includes(tag.name) && (
+                        {tag.Name}
+                        {filters.tags?.includes(tag.Name) && (
                           <ApperIcon name="Check" className="w-3 h-3 ml-1" />
                         )}
                       </Badge>
