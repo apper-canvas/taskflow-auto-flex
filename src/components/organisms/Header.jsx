@@ -1,11 +1,14 @@
-import { useState } from 'react'
-import ApperIcon from '@/components/ApperIcon'
-import Button from '@/components/atoms/Button'
-import SearchBar from '@/components/molecules/SearchBar'
-import CreateTaskModal from '@/components/organisms/CreateTaskModal'
-
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
+import { useAuth } from "@/layouts/Root";
+import ApperIcon from "@/components/ApperIcon";
+import SearchBar from "@/components/molecules/SearchBar";
+import CreateTaskModal from "@/components/organisms/CreateTaskModal";
+import Button from "@/components/atoms/Button";
 const Header = () => {
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const { user, isAuthenticated } = useSelector(state => state.user);
+  const { logout } = useAuth();
 
   return (
     <>
@@ -37,6 +40,24 @@ const Header = () => {
                 <ApperIcon name="Plus" className="w-4 h-4 mr-2" />
                 Create Task
               </Button>
+              
+              {/* User Actions */}
+              {isAuthenticated && (
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm text-slate-600 hidden md:block">
+                    {user?.firstName} {user?.lastName}
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={logout}
+                    className="text-slate-600 hover:text-slate-800"
+                  >
+                    <ApperIcon name="LogOut" className="w-4 h-4 mr-1" />
+                    Logout
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </div>

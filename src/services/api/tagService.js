@@ -1,106 +1,209 @@
-import tagsData from '@/services/mockData/tags.json'
-
-// Simulate API delay
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms))
-
-// Local storage key
-const STORAGE_KEY = 'taskflow_tags'
-
-// Initialize localStorage with mock data if empty
-const initializeStorage = () => {
-  const stored = localStorage.getItem(STORAGE_KEY)
-  if (!stored) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(tagsData))
-    return tagsData
-  }
-  return JSON.parse(stored)
-}
-
-// Get tags from localStorage
-const getTags = () => {
-  const tags = localStorage.getItem(STORAGE_KEY)
-  return tags ? JSON.parse(tags) : initializeStorage()
-}
-
-// Save tags to localStorage
-const saveTags = (tags) => {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(tags))
-}
+import { getApperClient } from '@/services/apperClient'
+import { toast } from 'react-toastify'
 
 export const tagService = {
   // Get all tags
   async getAll() {
-    await delay(250)
-    return [...getTags()]
+    try {
+      const apperClient = getApperClient();
+      if (!apperClient) {
+        throw new Error('ApperClient not available');
+      }
+
+      const response = await apperClient.fetchRecords('Tag_c', {
+        fields: [
+          {"field": {"Name": "Name"}},
+          {"field": {"Name": "Tags"}},
+          {"field": {"Name": "color_c"}}
+        ],
+        orderBy: [{"fieldName": "Name", "sorttype": "ASC"}]
+      });
+
+      if (!response.success) {
+        console.error(response.message);
+        toast.error(response.message);
+        return [];
+      }
+
+      return response.data || [];
+    } catch (error) {
+      console.error("Error fetching tags:", error?.response?.data?.message || error);
+      toast.error("Failed to fetch tags");
+      return [];
+    }
   },
 
   // Get tag by ID
   async getById(id) {
-    await delay(200)
-    const tags = getTags()
-    const tag = tags.find(t => t.Id === parseInt(id))
-    if (!tag) {
-      throw new Error(`Tag with ID ${id} not found`)
+    try {
+      const apperClient = getApperClient();
+      if (!apperClient) {
+        throw new Error('ApperClient not available');
+      }
+
+      const response = await apperClient.getRecordById('Tag_c', parseInt(id), {
+        fields: [
+          {"field": {"Name": "Name"}},
+          {"field": {"Name": "Tags"}}, 
+          {"field": {"Name": "color_c"}}
+        ]
+      });
+
+      if (!response.success) {
+        console.error(response.message);
+        toast.error(response.message);
+        return null;
+      }
+
+      return response.data;
+    } catch (error) {
+      console.error(`Error fetching tag ${id}:`, error?.response?.data?.message || error);
+      toast.error("Failed to fetch tag");
+      return null;
     }
-    return { ...tag }
   },
 
   // Create new tag
   async create(tagData) {
-    await delay(300)
-    const tags = getTags()
-    
-    // Check if tag with same name already exists (case insensitive)
-    const existingTag = tags.find(t => t.name.toLowerCase() === tagData.name.toLowerCase())
-    if (existingTag) {
-      return { ...existingTag }
+    try {
+      const apperClient = getApperClient();
+      if (!apperClient) {
+        throw new Error('ApperClient not available');
+      }
+
+      const params = {
+        records: [{
+          Name: tagData.Name,
+          Tags: tagData.Tags || "",
+          color_c: tagData.color_c || "#3b82f6"
+        }]
+      };
+
+      const response = await apperClient.createRecord('Tag_c', params);
+
+      if (!response.success) {
+        console.error(response.message);
+        toast.error(response.message);
+        return null;
+      }
+
+      if (response.results) {
+        const successful = response.results.filter(r => r.success);
+        const failed = response.results.filter(r => !r.success);
+
+        if (failed.length > 0) {
+          console.error(`Failed to create ${failed.length} tags:`, failed);
+          failed.forEach(record => {
+            record.errors?.forEach(error => toast.error(`${error.fieldLabel}: ${error}`));
+            if (record.message) toast.error(record.message);
+          });
+        }
+
+        if (successful.length > 0) {
+          toast.success("Tag created successfully");
+          return successful[0].data;
+        }
+      }
+
+      return null;
+    } catch (error) {
+      console.error("Error creating tag:", error?.response?.data?.message || error);
+      toast.error("Failed to create tag");
+      return null;
     }
-    
-    // Find the highest existing Id and add 1
-    const maxId = tags.length > 0 ? Math.max(...tags.map(t => t.Id)) : 0
-    const newTag = {
-      Id: maxId + 1,
-      name: tagData.name,
-      color: tagData.color || "#3b82f6"
-    }
-    
-    tags.push(newTag)
-    saveTags(tags)
-    return { ...newTag }
   },
 
   // Update tag
   async update(id, updateData) {
-    await delay(300)
-    const tags = getTags()
-    const tagIndex = tags.findIndex(t => t.Id === parseInt(id))
-    
-    if (tagIndex === -1) {
-      throw new Error(`Tag with ID ${id} not found`)
-    }
+    try {
+      const apperClient = getApperClient();
+      if (!apperClient) {
+        throw new Error('ApperClient not available');
+      }
 
-    tags[tagIndex] = {
-      ...tags[tagIndex],
-      ...updateData,
-      Id: parseInt(id) // Ensure ID remains integer
+      const params = {
+        records: [{
+          Id: parseInt(id),
+          ...(updateData.Name && { Name: updateData.Name }),
+          ...(updateData.Tags !== undefined && { Tags: updateData.Tags }),
+          ...(updateData.color_c && { color_c: updateData.color_c })
+        }]
+      };
+
+      const response = await apperClient.updateRecord('Tag_c', params);
+
+      if (!response.success) {
+        console.error(response.message);
+        toast.error(response.message);
+        return null;
+      }
+
+      if (response.results) {
+        const successful = response.results.filter(r => r.success);
+        const failed = response.results.filter(r => !r.success);
+
+        if (failed.length > 0) {
+          console.error(`Failed to update ${failed.length} tags:`, failed);
+          failed.forEach(record => {
+            record.errors?.forEach(error => toast.error(`${error.fieldLabel}: ${error}`));
+            if (record.message) toast.error(record.message);
+          });
+        }
+
+        if (successful.length > 0) {
+          toast.success("Tag updated successfully");
+          return successful[0].data;
+        }
+      }
+
+      return null;
+    } catch (error) {
+      console.error("Error updating tag:", error?.response?.data?.message || error);
+      toast.error("Failed to update tag");
+      return null;
     }
-    
-    saveTags(tags)
-    return { ...tags[tagIndex] }
   },
 
   // Delete tag
   async delete(id) {
-    await delay(250)
-    const tags = getTags()
-    const tagIndex = tags.findIndex(t => t.Id === parseInt(id))
-    
-    if (tagIndex === -1) {
-      throw new Error(`Tag with ID ${id} not found`)
-    }
+    try {
+      const apperClient = getApperClient();
+      if (!apperClient) {
+        throw new Error('ApperClient not available');
+      }
 
-    tags.splice(tagIndex, 1)
-    saveTags(tags)
-    return true
+      const response = await apperClient.deleteRecord('Tag_c', {
+        RecordIds: [parseInt(id)]
+      });
+
+      if (!response.success) {
+        console.error(response.message);
+        toast.error(response.message);
+        return false;
+      }
+
+      if (response.results) {
+        const successful = response.results.filter(r => r.success);
+        const failed = response.results.filter(r => !r.success);
+
+        if (failed.length > 0) {
+          console.error(`Failed to delete ${failed.length} tags:`, failed);
+          failed.forEach(record => {
+            if (record.message) toast.error(record.message);
+          });
+        }
+
+        if (successful.length > 0) {
+          toast.success("Tag deleted successfully");
+          return true;
+        }
+      }
+
+      return false;
+    } catch (error) {
+      console.error("Error deleting tag:", error?.response?.data?.message || error);
+      toast.error("Failed to delete tag");
+      return false;
+    }
   }
 }

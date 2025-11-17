@@ -1,108 +1,219 @@
-import tasksData from '@/services/mockData/tasks.json'
-
-// Simulate API delay
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms))
-
-// Local storage key
-const STORAGE_KEY = 'taskflow_tasks'
-
-// Initialize localStorage with mock data if empty
-const initializeStorage = () => {
-  const stored = localStorage.getItem(STORAGE_KEY)
-  if (!stored) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(tasksData))
-    return tasksData
-  }
-  return JSON.parse(stored)
-}
-
-// Get tasks from localStorage
-const getTasks = () => {
-  const tasks = localStorage.getItem(STORAGE_KEY)
-  return tasks ? JSON.parse(tasks) : initializeStorage()
-}
-
-// Save tasks to localStorage
-const saveTasks = (tasks) => {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks))
-}
+import { getApperClient } from '@/services/apperClient'
+import { toast } from 'react-toastify'
 
 export const taskService = {
   // Get all tasks
   async getAll() {
-    await delay(300)
-    return [...getTasks()]
+    try {
+      const apperClient = getApperClient();
+      if (!apperClient) {
+        throw new Error('ApperClient not available');
+      }
+
+      const response = await apperClient.fetchRecords('Task_c', {
+        fields: [
+          {"field": {"Name": "Name"}},
+          {"field": {"Name": "Tags"}},
+          {"field": {"Name": "Owner"}},
+          {"field": {"Name": "CreatedOn"}},
+          {"field": {"Name": "CreatedBy"}},
+          {"field": {"Name": "ModifiedOn"}},
+          {"field": {"Name": "ModifiedBy"}},
+          {"field": {"Name": "status_c"}}
+        ],
+        orderBy: [{"fieldName": "CreatedOn", "sorttype": "DESC"}]
+      });
+
+      if (!response.success) {
+        console.error(response.message);
+        toast.error(response.message);
+        return [];
+      }
+
+      return response.data || [];
+    } catch (error) {
+      console.error("Error fetching tasks:", error?.response?.data?.message || error);
+      toast.error("Failed to fetch tasks");
+      return [];
+    }
   },
 
   // Get task by ID
   async getById(id) {
-    await delay(200)
-    const tasks = getTasks()
-    const task = tasks.find(t => t.Id === parseInt(id))
-    if (!task) {
-      throw new Error(`Task with ID ${id} not found`)
+    try {
+      const apperClient = getApperClient();
+      if (!apperClient) {
+        throw new Error('ApperClient not available');
+      }
+
+      const response = await apperClient.getRecordById('Task_c', parseInt(id), {
+        fields: [
+          {"field": {"Name": "Name"}},
+          {"field": {"Name": "Tags"}},
+          {"field": {"Name": "Owner"}},
+          {"field": {"Name": "CreatedOn"}},
+          {"field": {"Name": "CreatedBy"}},
+          {"field": {"Name": "ModifiedOn"}},
+          {"field": {"Name": "ModifiedBy"}},
+          {"field": {"Name": "status_c"}}
+        ]
+      });
+
+      if (!response.success) {
+        console.error(response.message);
+        toast.error(response.message);
+        return null;
+      }
+
+      return response.data;
+    } catch (error) {
+      console.error(`Error fetching task ${id}:`, error?.response?.data?.message || error);
+      toast.error("Failed to fetch task");
+      return null;
     }
-    return { ...task }
   },
 
   // Create new task
   async create(taskData) {
-    await delay(400)
-    const tasks = getTasks()
-    
-    // Find the highest existing Id and add 1
-    const maxId = tasks.length > 0 ? Math.max(...tasks.map(t => t.Id)) : 0
-    const newTask = {
-      Id: maxId + 1,
-      name: taskData.name,
-      createdOn: taskData.createdOn || new Date().toISOString(),
-      createdBy: taskData.createdBy || "Current User",
-      modifiedOn: taskData.modifiedOn || new Date().toISOString(),
-      modifiedBy: taskData.modifiedBy || "Current User",
-      owner: taskData.owner,
-      tags: taskData.tags || [],
-      status: taskData.status || "active"
+    try {
+      const apperClient = getApperClient();
+      if (!apperClient) {
+        throw new Error('ApperClient not available');
+      }
+
+      const params = {
+        records: [{
+          Name: taskData.Name,
+          Tags: taskData.Tags || "",
+          status_c: taskData.status_c || "active"
+        }]
+      };
+
+      const response = await apperClient.createRecord('Task_c', params);
+
+      if (!response.success) {
+        console.error(response.message);
+        toast.error(response.message);
+        return null;
+      }
+
+      if (response.results) {
+        const successful = response.results.filter(r => r.success);
+        const failed = response.results.filter(r => !r.success);
+
+        if (failed.length > 0) {
+          console.error(`Failed to create ${failed.length} tasks:`, failed);
+          failed.forEach(record => {
+            record.errors?.forEach(error => toast.error(`${error.fieldLabel}: ${error}`));
+            if (record.message) toast.error(record.message);
+          });
+        }
+
+        if (successful.length > 0) {
+          toast.success("Task created successfully");
+          return successful[0].data;
+        }
+      }
+
+      return null;
+    } catch (error) {
+      console.error("Error creating task:", error?.response?.data?.message || error);
+      toast.error("Failed to create task");
+      return null;
     }
-    
-    tasks.push(newTask)
-    saveTasks(tasks)
-    return { ...newTask }
   },
 
   // Update task
   async update(id, updateData) {
-    await delay(350)
-    const tasks = getTasks()
-    const taskIndex = tasks.findIndex(t => t.Id === parseInt(id))
-    
-    if (taskIndex === -1) {
-      throw new Error(`Task with ID ${id} not found`)
-    }
+    try {
+      const apperClient = getApperClient();
+      if (!apperClient) {
+        throw new Error('ApperClient not available');
+      }
 
-    tasks[taskIndex] = {
-      ...tasks[taskIndex],
-      ...updateData,
-      Id: parseInt(id), // Ensure ID remains integer
-      modifiedOn: new Date().toISOString(),
-      modifiedBy: updateData.modifiedBy || "Current User"
+      const params = {
+        records: [{
+          Id: parseInt(id),
+          ...(updateData.Name && { Name: updateData.Name }),
+          ...(updateData.Tags !== undefined && { Tags: updateData.Tags }),
+          ...(updateData.status_c && { status_c: updateData.status_c })
+        }]
+      };
+
+      const response = await apperClient.updateRecord('Task_c', params);
+
+      if (!response.success) {
+        console.error(response.message);
+        toast.error(response.message);
+        return null;
+      }
+
+      if (response.results) {
+        const successful = response.results.filter(r => r.success);
+        const failed = response.results.filter(r => !r.success);
+
+        if (failed.length > 0) {
+          console.error(`Failed to update ${failed.length} tasks:`, failed);
+          failed.forEach(record => {
+            record.errors?.forEach(error => toast.error(`${error.fieldLabel}: ${error}`));
+            if (record.message) toast.error(record.message);
+          });
+        }
+
+        if (successful.length > 0) {
+          toast.success("Task updated successfully");
+          return successful[0].data;
+        }
+      }
+
+      return null;
+    } catch (error) {
+      console.error("Error updating task:", error?.response?.data?.message || error);
+      toast.error("Failed to update task");
+      return null;
     }
-    
-    saveTasks(tasks)
-    return { ...tasks[taskIndex] }
   },
 
   // Delete task
   async delete(id) {
-    await delay(300)
-    const tasks = getTasks()
-    const taskIndex = tasks.findIndex(t => t.Id === parseInt(id))
-    
-    if (taskIndex === -1) {
-      throw new Error(`Task with ID ${id} not found`)
-    }
+    try {
+      const apperClient = getApperClient();
+      if (!apperClient) {
+        throw new Error('ApperClient not available');
+      }
 
-    tasks.splice(taskIndex, 1)
-    saveTasks(tasks)
-    return true
+      const response = await apperClient.deleteRecord('Task_c', {
+        RecordIds: [parseInt(id)]
+      });
+
+      if (!response.success) {
+        console.error(response.message);
+        toast.error(response.message);
+        return false;
+      }
+
+      if (response.results) {
+        const successful = response.results.filter(r => r.success);
+        const failed = response.results.filter(r => !r.success);
+
+        if (failed.length > 0) {
+          console.error(`Failed to delete ${failed.length} tasks:`, failed);
+          failed.forEach(record => {
+            if (record.message) toast.error(record.message);
+          });
+        }
+
+        if (successful.length > 0) {
+          toast.success("Task deleted successfully");
+          return true;
+        }
+      }
+
+      return false;
+    } catch (error) {
+      console.error("Error deleting task:", error?.response?.data?.message || error);
+      toast.error("Failed to delete task");
+      return false;
+    }
   }
 }

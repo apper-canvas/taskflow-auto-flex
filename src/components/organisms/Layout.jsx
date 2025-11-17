@@ -1,15 +1,27 @@
-import { Outlet } from 'react-router-dom'
-import Header from '@/components/organisms/Header'
+import { Outlet } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import React from "react";
+import Header from "@/components/organisms/Header";
 
-const Layout = () => {
+export default function Layout() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="min-h-screen bg-slate-50">
       <Header />
-      <main className="pt-20">
+      <main className="pt-16">
         <Outlet />
       </main>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </div>
-  )
+)
 }
-
-export default Layout

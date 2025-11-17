@@ -1,17 +1,17 @@
-import { useState } from 'react'
-import { format } from 'date-fns'
-import { toast } from 'react-toastify'
-import ApperIcon from '@/components/ApperIcon'
-import Button from '@/components/atoms/Button'
-import Badge from '@/components/atoms/Badge'
-import Input from '@/components/atoms/Input'
-import Select from '@/components/atoms/Select'
-import TagInput from '@/components/molecules/TagInput'
-import ConfirmDialog from '@/components/organisms/ConfirmDialog'
-import SearchBar from '@/components/molecules/SearchBar'
-import { taskService } from '@/services/api/taskService'
-import { tagService } from '@/services/api/tagService'
-import { cn } from '@/utils/cn'
+import React, { useState } from "react";
+import { format } from "date-fns";
+import { toast } from "react-toastify";
+import { taskService } from "@/services/api/taskService";
+import { tagService } from "@/services/api/tagService";
+import { cn } from "@/utils/cn";
+import ApperIcon from "@/components/ApperIcon";
+import SearchBar from "@/components/molecules/SearchBar";
+import TagInput from "@/components/molecules/TagInput";
+import ConfirmDialog from "@/components/organisms/ConfirmDialog";
+import Select from "@/components/atoms/Select";
+import Button from "@/components/atoms/Button";
+import Badge from "@/components/atoms/Badge";
+import Input from "@/components/atoms/Input";
 
 const TaskTable = ({ 
   tasks, 
@@ -29,11 +29,11 @@ const TaskTable = ({
   const [allTags, setAllTags] = useState([])
 
   const handleEditStart = async (task) => {
-    setEditingTask(task.Id)
+setEditingTask(task.Id)
     setEditForm({
-      name: task.name,
-      owner: task.owner,
-      tags: task.tags
+      Name: task.Name,
+      Owner: task.Owner?.Name || '',
+      Tags: task.Tags || ''
     })
 
     // Load tags for tag input
@@ -50,8 +50,8 @@ const TaskTable = ({
     setEditForm({})
   }
 
-  const handleEditSave = async (taskId) => {
-    if (!editForm.name?.trim()) {
+const handleEditSave = async (taskId) => {
+    if (!editForm.Name?.trim()) {
       toast.error("Task name is required")
       return
     }
@@ -59,11 +59,8 @@ const TaskTable = ({
     try {
       setSaving(true)
       const updatedTask = await taskService.update(taskId, {
-        name: editForm.name.trim(),
-        owner: editForm.owner,
-        tags: editForm.tags,
-        modifiedOn: new Date().toISOString(),
-        modifiedBy: "Current User"
+        Name: editForm.Name.trim(),
+        Tags: editForm.Tags
       })
 
       onTaskUpdate(updatedTask)
@@ -101,7 +98,7 @@ const TaskTable = ({
   }
 
   const getTagColor = (tagName) => {
-    const tag = allTags.find(t => t.name === tagName)
+const tag = allTags.find(t => t.Name === tagName)
     return tag?.color || "#3b82f6"
   }
 
@@ -218,11 +215,11 @@ const TaskTable = ({
             >
               <div className="grid grid-cols-7 gap-4 items-center">
                 {/* Task Name */}
-                <div className="min-w-0">
+<div className="min-w-0">
                   {editingTask === task.Id ? (
                     <Input
-                      value={editForm.name}
-                      onChange={(e) => setEditForm(prev => ({ ...prev, name: e.target.value }))}
+                      value={editForm.Name || ''}
+                      onChange={(e) => setEditForm(prev => ({ ...prev, Name: e.target.value }))}
                       onKeyDown={(e) => handleKeyDown(e, task.Id)}
                       className="text-sm font-medium inline-edit-field"
                       placeholder="Task name"
@@ -232,19 +229,19 @@ const TaskTable = ({
                     <div 
                       className="text-sm font-medium text-slate-900 truncate cursor-pointer hover:text-primary-600 transition-colors"
                       onClick={() => handleEditStart(task)}
-                      title={task.name}
+                      title={task.Name}
                     >
-                      {task.name}
+                      {task.Name}
                     </div>
                   )}
                 </div>
 
                 {/* Owner */}
-                <div className="min-w-0">
+<div className="min-w-0">
                   {editingTask === task.Id ? (
                     <Input
-                      value={editForm.owner}
-                      onChange={(e) => setEditForm(prev => ({ ...prev, owner: e.target.value }))}
+                      value={editForm.Owner || ''}
+                      onChange={(e) => setEditForm(prev => ({ ...prev, Owner: e.target.value }))}
                       onKeyDown={(e) => handleKeyDown(e, task.Id)}
                       className="text-sm inline-edit-field"
                       placeholder="Owner name"
@@ -253,33 +250,33 @@ const TaskTable = ({
                     <div 
                       className="text-sm text-slate-600 truncate cursor-pointer hover:text-slate-800 transition-colors"
                       onClick={() => handleEditStart(task)}
-                      title={task.owner}
+                      title={task.Owner?.Name || 'Unassigned'}
                     >
-                      {task.owner}
+                      {task.Owner?.Name || 'Unassigned'}
                     </div>
                   )}
                 </div>
 
                 {/* Tags */}
-                <div className="min-w-0">
+<div className="min-w-0">
                   {editingTask === task.Id ? (
                     <TagInput
-                      value={editForm.tags}
-                      onChange={(tags) => setEditForm(prev => ({ ...prev, tags }))}
+                      value={editForm.Tags || ''}
+                      onChange={(tags) => setEditForm(prev => ({ ...prev, Tags: tags }))}
                       placeholder="Add tags..."
                       className="text-sm"
                     />
                   ) : (
                     <div className="flex flex-wrap gap-1" onClick={() => handleEditStart(task)}>
-                      {task.tags.length > 0 ? (
-                        task.tags.slice(0, 3).map((tag, tagIndex) => (
+                      {task.Tags && task.Tags.trim() !== "" ? (
+                        task.Tags.split(',').slice(0, 3).map((tag, tagIndex) => (
                           <Badge
-                            key={`${task.Id}-${tag}-${tagIndex}`}
+                            key={`${task.Id}-${tag.trim()}-${tagIndex}`}
                             variant="custom"
-                            color={getTagColor(tag)}
+                            color={getTagColor(tag.trim())}
                             className="text-xs"
                           >
-                            {tag}
+                            {tag.trim()}
                           </Badge>
                         ))
                       ) : (
@@ -287,28 +284,28 @@ const TaskTable = ({
                           Add tags...
                         </span>
                       )}
-                      {task.tags.length > 3 && (
+                      {task.Tags && task.Tags.split(',').length > 3 && (
                         <Badge variant="secondary" className="text-xs">
-                          +{task.tags.length - 3}
+                          +{task.Tags.split(',').length - 3}
                         </Badge>
                       )}
                     </div>
                   )}
                 </div>
 
-                {/* Created By */}
-                <div className="text-sm text-slate-600 truncate" title={task.createdBy}>
-                  {task.createdBy}
+{/* Created By */}
+                <div className="text-sm text-slate-600 truncate" title={task.CreatedBy?.Name || 'Unknown'}>
+                  {task.CreatedBy?.Name || 'Unknown'}
                 </div>
 
                 {/* Created Date */}
-                <div className="text-sm text-slate-500" title={new Date(task.createdOn).toLocaleString()}>
-                  {format(new Date(task.createdOn), 'MMM d, yyyy')}
+                <div className="text-sm text-slate-500" title={new Date(task.CreatedOn).toLocaleString()}>
+                  {format(new Date(task.CreatedOn), 'MMM d, yyyy')}
                 </div>
 
                 {/* Modified Date */}
-                <div className="text-sm text-slate-500" title={new Date(task.modifiedOn).toLocaleString()}>
-                  {format(new Date(task.modifiedOn), 'MMM d, yyyy')}
+                <div className="text-sm text-slate-500" title={new Date(task.ModifiedOn).toLocaleString()}>
+                  {format(new Date(task.ModifiedOn), 'MMM d, yyyy')}
                 </div>
 
                 {/* Actions */}
@@ -382,7 +379,7 @@ const TaskTable = ({
         onClose={() => setDeleteTask(null)}
         onConfirm={handleDeleteConfirm}
         title="Delete Task"
-        message={`Are you sure you want to delete "${deleteTask?.name}"? This action cannot be undone.`}
+message={`Are you sure you want to delete "${deleteTask?.Name}"? This action cannot be undone.`}
         confirmText="Delete"
         confirmVariant="danger"
       />

@@ -51,30 +51,30 @@ const Dashboard = () => {
     if (searchQuery) {
       const query = searchQuery.toLowerCase()
       filtered = filtered.filter(task => 
-        task.name.toLowerCase().includes(query) ||
-        task.tags.some(tag => tag.toLowerCase().includes(query)) ||
-        task.owner.toLowerCase().includes(query)
+task.Name?.toLowerCase().includes(query) ||
+        task.Tags?.toLowerCase().includes(query) ||
+        (task.Owner?.Name || '').toLowerCase().includes(query)
       )
     }
 
     // Apply filters
     if (filters.owner) {
-      filtered = filtered.filter(task => task.owner === filters.owner)
+filtered = filtered.filter(task => task.Owner?.Name === filters.owner)
     }
 
     if (filters.createdBy) {
-      filtered = filtered.filter(task => task.createdBy === filters.createdBy)
+filtered = filtered.filter(task => task.CreatedBy?.Name === filters.createdBy)
     }
 
     if (filters.tags.length > 0) {
-      filtered = filtered.filter(task => 
-        filters.tags.some(filterTag => task.tags.includes(filterTag))
+filtered = filtered.filter(task => 
+        filters.tags.some(filterTag => task.Tags?.includes(filterTag))
       )
     }
 
     if (filters.dateRange.start) {
       const startDate = new Date(filters.dateRange.start)
-      filtered = filtered.filter(task => new Date(task.createdOn) >= startDate)
+filtered = filtered.filter(task => new Date(task.CreatedOn) >= startDate)
     }
 
     if (filters.dateRange.end) {
@@ -84,11 +84,11 @@ const Dashboard = () => {
 
     // Apply sorting
     filtered.sort((a, b) => {
-      let aVal = a[sortConfig.key]
+let aVal = a[sortConfig.key] || (sortConfig.key === 'Owner' ? a.Owner?.Name : a[sortConfig.key])
       let bVal = b[sortConfig.key]
 
       // Handle dates
-      if (sortConfig.key.includes("On")) {
+if (sortConfig.key === "CreatedOn" || sortConfig.key === "ModifiedOn") {
         aVal = new Date(aVal)
         bVal = new Date(bVal)
       }
@@ -199,7 +199,7 @@ const Dashboard = () => {
             onClick={() => {
               setSearchQuery("")
               setFilters({
-                owner: "",
+owner: "",
                 tags: [],
                 createdBy: "",
                 dateRange: { start: "", end: "" }

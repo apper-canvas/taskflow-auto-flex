@@ -30,8 +30,8 @@ const TagInput = ({
 
   useEffect(() => {
     if (inputValue) {
-      const filtered = allTags.filter(tag => 
-        tag.name.toLowerCase().includes(inputValue.toLowerCase()) &&
+const filtered = allTags.filter(tag => 
+        tag.Name?.toLowerCase().includes(inputValue.toLowerCase()) &&
         !value.includes(tag.name)
       )
       setSuggestions(filtered)
@@ -74,8 +74,8 @@ const TagInput = ({
     if (!existingTag) {
       try {
         const newTag = await tagService.create({
-          name: trimmedName,
-          color: color
+Name: trimmedName,
+          color_c: color
         })
         setAllTags(prev => [...prev, newTag])
         existingTag = newTag
@@ -85,7 +85,7 @@ const TagInput = ({
       }
     }
 
-    onChange([...value, existingTag.name])
+onChange([...value, existingTag.Name])
     setInputValue("")
     setIsOpen(false)
   }
@@ -109,7 +109,7 @@ const TagInput = ({
   }
 
   const getTagColor = (tagName) => {
-    const tag = allTags.find(t => t.name === tagName)
+const tag = allTags.find(t => t.Name === tagName)
     return tag?.color || "#3b82f6"
   }
 
@@ -190,7 +190,7 @@ const TagInput = ({
           )}
 
           {/* Existing Tag Suggestions */}
-          {suggestions.map((tag, index) => (
+{suggestions.map((tag, index) => (
             <button
               key={`${tag.Id}-${index}`}
               type="button"
@@ -206,7 +206,7 @@ const TagInput = ({
           ))}
 
           {/* No Results */}
-          {inputValue && suggestions.length === 0 && allTags.some(tag => tag.name.toLowerCase() === inputValue.toLowerCase()) && (
+{inputValue && suggestions.length === 0 && allTags.some(tag => tag.Name?.toLowerCase() === inputValue.toLowerCase()) && (
             <div className="px-3 py-2 text-sm text-slate-500">
               Tag already exists or selected
             </div>

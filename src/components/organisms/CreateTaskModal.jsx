@@ -1,18 +1,17 @@
-import { useState } from 'react'
-import { toast } from 'react-toastify'
-import ApperIcon from '@/components/ApperIcon'
-import Button from '@/components/atoms/Button'
-import Input from '@/components/atoms/Input'
-import Label from '@/components/atoms/Label'
-import Modal from '@/components/organisms/Modal'
-import TagInput from '@/components/molecules/TagInput'
-import { taskService } from '@/services/api/taskService'
+import React, { useState } from "react";
+import { toast } from "react-toastify";
+import { taskService } from "@/services/api/taskService";
+import ApperIcon from "@/components/ApperIcon";
+import TagInput from "@/components/molecules/TagInput";
+import Modal from "@/components/organisms/Modal";
+import Label from "@/components/atoms/Label";
+import Button from "@/components/atoms/Button";
+import Input from "@/components/atoms/Input";
 
 const CreateTaskModal = ({ isOpen, onClose }) => {
-  const [formData, setFormData] = useState({
+const [formData, setFormData] = useState({
     name: "",
-    owner: "",
-    tags: []
+    tags: ""
   })
   const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)
@@ -24,15 +23,11 @@ const CreateTaskModal = ({ isOpen, onClose }) => {
     }
   }
 
-  const validateForm = () => {
+const validateForm = () => {
     const newErrors = {}
 
     if (!formData.name.trim()) {
       newErrors.name = "Task name is required"
-    }
-
-    if (!formData.owner.trim()) {
-      newErrors.owner = "Owner is required"
     }
 
     setErrors(newErrors)
@@ -47,14 +42,10 @@ const CreateTaskModal = ({ isOpen, onClose }) => {
     try {
       setLoading(true)
       
-      const newTask = await taskService.create({
-        name: formData.name.trim(),
-        owner: formData.owner.trim(),
-        tags: formData.tags,
-        createdOn: new Date().toISOString(),
-        createdBy: "Current User",
-        modifiedOn: new Date().toISOString(),
-        modifiedBy: "Current User",
+const newTask = await taskService.create({
+        Name: formData.name.trim(),
+        Tags: formData.tags,
+        status_c: "active",
         status: "active"
       })
 
@@ -72,8 +63,8 @@ const CreateTaskModal = ({ isOpen, onClose }) => {
     }
   }
 
-  const handleClose = () => {
-    setFormData({ name: "", owner: "", tags: [] })
+const handleClose = () => {
+    setFormData({ name: "", tags: "" })
     setErrors({})
     onClose()
   }
@@ -103,7 +94,7 @@ const CreateTaskModal = ({ isOpen, onClose }) => {
           {/* Task Name */}
           <div>
             <Label required>Task Name</Label>
-            <Input
+<Input
               value={formData.name}
               onChange={(e) => handleInputChange("name", e.target.value)}
               placeholder="Enter task name"
@@ -119,30 +110,39 @@ const CreateTaskModal = ({ isOpen, onClose }) => {
             )}
           </div>
 
-          {/* Owner */}
+{/* Tags (Input) */}
           <div>
-            <Label required>Owner</Label>
+            <Label>Tags (comma separated)</Label>
             <Input
-              value={formData.owner}
-              onChange={(e) => handleInputChange("owner", e.target.value)}
-              placeholder="Enter task owner"
-              error={errors.owner}
+              value={formData.tags}
+              onChange={(e) => handleInputChange("tags", e.target.value)}
+              placeholder="Enter tags separated by commas"
+              error={errors.tags}
               className="text-base"
             />
-            {errors.owner && (
+            {errors.tags && (
               <p className="text-sm text-red-600 mt-1 flex items-center">
                 <ApperIcon name="AlertCircle" className="w-4 h-4 mr-1" />
-                {errors.owner}
+                {errors.tags}
               </p>
             )}
           </div>
 
+          {/* Tags (Visual) */}
+<Input
+              value={formData.tags}
+              onChange={(e) => handleInputChange("tags", e.target.value)}
+              placeholder="Enter tags (comma separated)"
+              error={errors.tags}
+              className="text-base"
+            />
+
           {/* Tags */}
           <div>
             <Label>Tags</Label>
-            <TagInput
-              value={formData.tags}
-              onChange={(tags) => handleInputChange("tags", tags)}
+<TagInput
+              value={formData.tags ? formData.tags.split(',').map(t => t.trim()).filter(Boolean) : []}
+              onChange={(tags) => handleInputChange("tags", Array.isArray(tags) ? tags.join(',') : tags)}
               placeholder="Add tags to categorize this task"
             />
             <p className="text-sm text-slate-500 mt-1">
@@ -178,8 +178,9 @@ const CreateTaskModal = ({ isOpen, onClose }) => {
               Cancel
             </Button>
             <Button
+<Button
               type="submit"
-              disabled={loading || !formData.name.trim() || !formData.owner.trim()}
+              disabled={loading || !formData.name.trim()}
               className="bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white px-6"
             >
               {loading ? (

@@ -34,8 +34,8 @@ const FilterPanel = ({
   }
 
   // Get unique values from tasks
-  const uniqueOwners = [...new Set(tasks.map(task => task.owner))].filter(Boolean)
-  const uniqueCreators = [...new Set(tasks.map(task => task.createdBy))].filter(Boolean)
+const uniqueOwners = [...new Set(tasks.map(task => task.Owner?.Name))].filter(Boolean)
+  const uniqueCreators = [...new Set(tasks.map(task => task.CreatedBy?.Name))].filter(Boolean)
 
   const handleFilterChange = (key, value) => {
     onFiltersChange(prev => ({
@@ -83,7 +83,7 @@ const FilterPanel = ({
   }
 
   const getTagColor = (tagName) => {
-    const tag = allTags.find(t => t.name === tagName)
+const tag = allTags.find(t => t.Name === tagName)
     return tag?.color || "#3b82f6"
   }
 
